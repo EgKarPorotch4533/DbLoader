@@ -5,8 +5,10 @@ import java.sql.Array;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.NClob;
+import java.sql.Ref;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.sql.SQLXML;
 
 /**
  * Narrowed interface java.sql.ResultSet
@@ -368,5 +370,37 @@ public interface Cortege {
      * @since 1.6
      */
     NClob getNClob(int columnIndex) throws SQLException;
+
+    /**
+     * Retrieves the value of the designated column in the current row
+     * of this <code>ResultSet</code> object as a <code>Ref</code> object
+     * in the Java programming language.
+     *
+     * @param columnIndex the first column is 1, the second is 2, ...
+     * @return a <code>Ref</code> object representing an SQL <code>REF</code>
+     *         value
+     * @exception SQLException if the columnIndex is not valid;
+     * if a database access error occurs
+     * or this method is called on a closed result set
+     * @exception SQLFeatureNotSupportedException if the JDBC driver does not support
+     * this method
+     * @since 1.2
+     */
+    Ref getRef(int columnIndex) throws SQLException;
+
+    /**
+     * Retrieves the value of the designated column in  the current row of
+     *  this <code>ResultSet</code> as a
+     * <code>java.sql.SQLXML</code> object in the Java programming language.
+     * @param columnIndex the first column is 1, the second is 2, ...
+     * @return a <code>SQLXML</code> object that maps an <code>SQL XML</code> value
+     * @throws SQLException if the columnIndex is not valid;
+     * if a database access error occurs
+     * or this method is called on a closed result set
+     * @exception SQLFeatureNotSupportedException if the JDBC driver does not support
+     * this method
+     * @since 1.6
+     */
+    SQLXML getSQLXML(int columnIndex) throws SQLException;
 
 }

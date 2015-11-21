@@ -7,8 +7,10 @@ import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Date;
 import java.sql.NClob;
+import java.sql.Ref;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.SQLXML;
 import java.sql.Time;
 import java.sql.Timestamp;
 
@@ -39,6 +41,8 @@ public class RecordCache implements Cortege {
 	java.io.InputStream[] asciistreams;
 	java.io.InputStream[] binarystreams;
 	NClob[] nclobs;
+	Ref[] refs;
+	SQLXML[] sqlxmls;
 	
 	public RecordCache(ResultSet rs) throws SQLException {
 		int cnt = rs.getMetaData().getColumnCount();
@@ -61,6 +65,8 @@ public class RecordCache implements Cortege {
 		asciistreams = new java.io.InputStream[cnt];
 		binarystreams = new java.io.InputStream[cnt];
 		nclobs = new NClob[cnt];
+		refs = new Ref[cnt];
+		sqlxmls = new SQLXML[cnt];
 		for (int i = 0; i < cnt; i++) {
 			int columnIndex = i + 1;
 			strings[i] = rs.getString(columnIndex);
@@ -83,6 +89,8 @@ public class RecordCache implements Cortege {
 			asciistreams[i] = rs.getAsciiStream(columnIndex);
 			binarystreams[i] = rs.getBinaryStream(columnIndex);
 			nclobs[i] = rs.getNClob(columnIndex);
+			refs[i] = rs.getRef(columnIndex);
+			sqlxmls[i] = rs.getSQLXML(columnIndex);
 		}
 	}
 
@@ -184,5 +192,15 @@ public class RecordCache implements Cortege {
 	@Override
 	public NClob getNClob(int columnIndex) throws SQLException {
 		return nclobs[columnIndex - 1];
+	}
+
+	@Override
+	public Ref getRef(int columnIndex) throws SQLException {
+		return refs[columnIndex - 1];
+	}
+
+	@Override
+	public SQLXML getSQLXML(int columnIndex) throws SQLException {
+		return sqlxmls[columnIndex - 1];
 	}
 }

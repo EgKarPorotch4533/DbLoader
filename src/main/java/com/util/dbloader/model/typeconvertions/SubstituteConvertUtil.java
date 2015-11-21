@@ -73,7 +73,43 @@ public class SubstituteConvertUtil {
 				// TODO: ?
 				break;
 			case java.sql.Types.NCLOB:
-//				st.setNClob(column, r.getN);
+				st.setNClob(column, r.getNClob(column));
+				break;
+			case java.sql.Types.NULL:
+				st.setNull(column, sqlType);
+				break;
+			case java.sql.Types.NUMERIC:
+				st.setBigDecimal(column, r.getBigDecimal(column));
+				break;
+			case java.sql.Types.NVARCHAR:
+				st.setString(column, r.getString(column));
+				break;
+			case java.sql.Types.OTHER:
+				st.setObject(column, r.getObject(column));
+				break;
+			case java.sql.Types.REAL:
+				st.setFloat(column, r.getFloat(column));
+				break;
+			case java.sql.Types.REF:
+				st.setRef(column, r.getRef(column));
+				break;
+			case java.sql.Types.ROWID:
+				// TODO: ?
+				break;
+			case java.sql.Types.SMALLINT:
+				st.setShort(column, r.getShort(column));
+				break;
+			case java.sql.Types.SQLXML:
+				st.setSQLXML(column, r.getSQLXML(column));
+				break;
+			case java.sql.Types.STRUCT:
+				st.setObject(column, r.getObject(column));
+				break;
+			case java.sql.Types.TIME:
+				st.setTime(column, r.getTime(column));
+				break;
+			case java.sql.Types.TIMESTAMP:
+				st.setTimestamp(column, r.getTimestamp(column));
 				break;
 			}
 		}

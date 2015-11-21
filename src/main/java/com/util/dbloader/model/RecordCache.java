@@ -2,6 +2,7 @@ package com.util.dbloader.model;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.net.URL;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.Clob;
@@ -43,6 +44,7 @@ public class RecordCache implements Cortege {
 	NClob[] nclobs;
 	Ref[] refs;
 	SQLXML[] sqlxmls;
+	URL[] urls;
 	
 	public RecordCache(ResultSet rs) throws SQLException {
 		int cnt = rs.getMetaData().getColumnCount();
@@ -67,6 +69,7 @@ public class RecordCache implements Cortege {
 		nclobs = new NClob[cnt];
 		refs = new Ref[cnt];
 		sqlxmls = new SQLXML[cnt];
+		urls = new URL[cnt];
 		for (int i = 0; i < cnt; i++) {
 			int columnIndex = i + 1;
 			strings[i] = rs.getString(columnIndex);
@@ -91,6 +94,7 @@ public class RecordCache implements Cortege {
 			nclobs[i] = rs.getNClob(columnIndex);
 			refs[i] = rs.getRef(columnIndex);
 			sqlxmls[i] = rs.getSQLXML(columnIndex);
+			urls[i] = rs.getURL(columnIndex);
 		}
 	}
 
@@ -202,5 +206,10 @@ public class RecordCache implements Cortege {
 	@Override
 	public SQLXML getSQLXML(int columnIndex) throws SQLException {
 		return sqlxmls[columnIndex - 1];
+	}
+
+	@Override
+	public URL getURL(int columnIndex) throws SQLException {
+		return urls[columnIndex - 1];
 	}
 }

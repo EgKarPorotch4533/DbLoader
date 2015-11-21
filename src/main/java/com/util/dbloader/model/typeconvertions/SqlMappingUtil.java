@@ -1,15 +1,22 @@
 package com.util.dbloader.model.typeconvertions;
 
-import java.io.Reader;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import com.util.dbloader.model.Metadata;
 import com.util.dbloader.model.RecordCache;
 
-public class SubstituteConvertUtil {
+public class SqlMappingUtil {
 	
-	public static void substitute(PreparedStatement st, Metadata md, RecordCache r) throws SQLException {
+	/**
+	 * Suppose there is already constructed by PreparedInsert statement according to exact given Metadata. Will not work with
+	 * another statements due to defined order!
+	 * @param st
+	 * @param md
+	 * @param r
+	 * @throws SQLException
+	 */
+	public static void evaluateStatement(PreparedStatement st, Metadata md, RecordCache r) throws SQLException {
 		for (int i = 0; i < md.getColumnCount(); i++) {
 			int column = i + 1;
 			int sqlType = md.getColumnType(column);
@@ -39,7 +46,7 @@ public class SubstituteConvertUtil {
 				st.setClob(column, r.getClob(column));
 				break;
 			case java.sql.Types.DATALINK:
-				// TODO: ? some of new ...
+				st.setURL(column, r.getURL(column));
 				break;
 			case java.sql.Types.DATE:
 				st.setDate(column, r.getDate(column));

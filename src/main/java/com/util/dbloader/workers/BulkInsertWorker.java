@@ -1,6 +1,7 @@
 package com.util.dbloader.workers;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import com.util.dbloader.connections.ConnectionDescriptor;
 import com.util.dbloader.model.Metadata;
 import com.util.dbloader.model.RecordCache;
 import com.util.dbloader.model.statements.PreparedInsert;
+import com.util.dbloader.model.typeconvertions.SqlMappingUtil;
 
 public class BulkInsertWorker implements Runnable {
 
@@ -18,14 +20,16 @@ public class BulkInsertWorker implements Runnable {
 	private final String schemaName;
 	private final LinkedBlockingQueue<RecordCache> cacheQueue;
 	private final int bulkSize;
+	private final Metadata md;
 	
-	public BulkInsertWorker(ConnectionDescriptor connectionDescriptor, Metadata md,
+	public BulkInsertWorker(ConnectionDescriptor connectionDescriptor, Metadata md, String schemaName,
 			LinkedBlockingQueue<RecordCache> cacheQueue, int bulkSize) throws SQLException {
 		this.connectionDescriptor = connectionDescriptor;
 		this.tableName = md.getTableName(1);
-		this.schemaName = md.getSchemaName(1);
+		this.schemaName = schemaName;
 		this.cacheQueue = cacheQueue;
 		this.bulkSize = bulkSize;
+		this.md = md;
 	}
 	
 	@Override
@@ -34,7 +38,7 @@ public class BulkInsertWorker implements Runnable {
 		try {
 			connection = connectionDescriptor.createConnection();
 			List<RecordCache> cacheList = new ArrayList<RecordCache>();
-			while (cacheQueue.isEmpty()) {
+			while (!cacheQueue.isEmpty()) {
 				int k = bulkSize;
 				cacheList.clear();
 				while(k-- > 0 && !cacheQueue.isEmpty()) {
@@ -54,7 +58,12 @@ public class BulkInsertWorker implements Runnable {
 	}
 	
 	private void pushSlice(Connection connection, List<RecordCache> cacheList) throws SQLException {
-		connection.prepareStatement(new PreparedInsert(null).getNamedInsert());
+		PreparedStatement ps = connection.prepareStatement(new PreparedInsert(null).getNamedInsert());
+		for (RecordCache record : cacheList) {
+			SqlMappingUtil.evaluateStatement(ps, md, record);
+			ps.addBatch();
+		}
+		ps.executeBatch();
 	}
 
 }

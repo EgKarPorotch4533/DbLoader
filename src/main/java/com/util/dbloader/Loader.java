@@ -67,7 +67,7 @@ public class Loader {
 		}
 		// create writers
 		for (int k = 0; k < NUM_OF_WRITERS; k++) {
-			service.execute(new BulkInsertWorker(destDescriptor, md, cacheQueue, BULK_INSERT_SIZE));
+			service.execute(new BulkInsertWorker(destDescriptor, md, destSchema, cacheQueue, BULK_INSERT_SIZE));
 		}
 		// wait for writers to start
 		Thread.sleep(3000);

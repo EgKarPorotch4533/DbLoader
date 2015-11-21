@@ -48,7 +48,7 @@ public class SubstituteConvertUtil {
 				st.setBigDecimal(column, r.getBigDecimal(column));
 				break;
 			case java.sql.Types.DISTINCT:
-				// TODO: ? some of new ...
+				st.setString(column, r.getString(column));
 				break;
 			case java.sql.Types.DOUBLE:
 				st.setDouble(column, r.getDouble(column));
@@ -70,7 +70,7 @@ public class SubstituteConvertUtil {
 				st.setBinaryStream(column, r.getBinaryStream(column));
 				break;
 			case java.sql.Types.NCHAR:
-				// TODO: ?
+				st.setString(column, r.getString(column));
 				break;
 			case java.sql.Types.NCLOB:
 				st.setNClob(column, r.getNClob(column));
@@ -94,7 +94,7 @@ public class SubstituteConvertUtil {
 				st.setRef(column, r.getRef(column));
 				break;
 			case java.sql.Types.ROWID:
-				// TODO: ?
+				// not transferable, skip
 				break;
 			case java.sql.Types.SMALLINT:
 				st.setShort(column, r.getShort(column));
@@ -110,6 +110,15 @@ public class SubstituteConvertUtil {
 				break;
 			case java.sql.Types.TIMESTAMP:
 				st.setTimestamp(column, r.getTimestamp(column));
+				break;
+			case java.sql.Types.TINYINT:
+				st.setByte(column, r.getByte(column));
+				break;
+			case java.sql.Types.VARBINARY:
+				st.setBytes(column, r.getBytes(column));
+				break;
+			case java.sql.Types.VARCHAR:
+				st.setString(column, r.getString(column));
 				break;
 			}
 		}

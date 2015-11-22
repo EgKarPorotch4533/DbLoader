@@ -48,6 +48,7 @@ public class BulkInsertWorker implements Runnable {
 					pushSlice(connection, cacheList);
 				} catch (SQLException e1) {
 					System.err.printf("sql exception while writing to table (%s) of schema (%s)%n", tableName, schemaName);
+					e1.printStackTrace();
 				}
 			}
 		} catch (SQLException | ClassNotFoundException e) {

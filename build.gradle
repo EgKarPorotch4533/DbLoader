@@ -13,4 +13,5 @@ dependencies {
 	compile 'org.postgresql:postgresql:9.4-1205-jdbc42'
 	compile 'org.hsqldb:hsqldb:2.3.2'
 	testCompile 'junit:junit:4.11'
+	testCompile 'commons-io:commons-io:2.4'
 }

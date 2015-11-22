@@ -17,3 +17,5 @@ hs_err_pid*
 .gradle
 .settings
 build/*
+bin/*
+src/test/resources/com/util/dbloader/testCreateDb.*

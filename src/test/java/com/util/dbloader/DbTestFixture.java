@@ -1,10 +1,12 @@
 package com.util.dbloader;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 
@@ -25,8 +27,12 @@ public class DbTestFixture extends TestFixture {
 	}
 	
 	public Connection createDb(String dbFileName) throws SQLException, ClassNotFoundException {
+		return createDb(dbFileName, true);
+	}
+	
+	public Connection createDb(String dbFileName, boolean shutdown) throws SQLException, ClassNotFoundException {
 		Class.forName(HSQL_DRIVER_NAME);
-		String url = String.format("jdbc:hsqldb:file:%s/%s;shutdown=true",
+		String url = String.format("jdbc:hsqldb:file:%s/%s;shutdown=" + shutdown,
 				super.classResourcesDir.getAbsolutePath(), dbFileName);
 		return DriverManager.getConnection(url, "sa", "");
 	}
@@ -39,10 +45,24 @@ public class DbTestFixture extends TestFixture {
 		}
 	}
 	
-	public void cleanupDb(String dbFileName) {
-		File dbFileToCleanup = new File(super.classResourcesDir, dbFileName);
-		if (dbFileToCleanup.exists()) {
-			dbFileToCleanup.delete();
+	public void cleanupAndDeleteDb(String dbFileName) {
+		File dbFolder = new File(super.classResourcesDir, dbFileName + ".tmp");
+		File dbLogFile = new File(super.classResourcesDir, dbFileName + ".log");
+		File dbPropFile = new File(super.classResourcesDir, dbFileName + ".properties");
+		File dbScriptFile = new File(super.classResourcesDir, dbFileName + ".script");
+		if (dbLogFile.exists()) {
+			dbLogFile.delete();
+		}
+		if (dbPropFile.exists()) {
+			dbPropFile.delete();
+		}
+		if (dbScriptFile.exists()) {
+			dbScriptFile.delete();
+		}
+		if (dbFolder.exists()) {
+			try {
+				FileUtils.forceDelete(dbFolder);
+			} catch (IOException e) {}
 		}
 	}
 }

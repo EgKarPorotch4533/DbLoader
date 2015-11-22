@@ -4,13 +4,13 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.Assert;
 
-import com.util.dbloader.TestFixture;
+import com.util.dbloader.DbTestFixture;
 
-public class HSqlConnectionDescriptorTest extends TestFixture {
+public class HSqlConnectionDescriptorTest extends DbTestFixture {
 
 	@Before
 	public void setUp() throws Exception {
@@ -32,6 +32,7 @@ public class HSqlConnectionDescriptorTest extends TestFixture {
 		Assert.assertFalse(c.isClosed());
 		c.close();
 		Assert.assertTrue(c.isClosed());
+		super.cleanupAndDeleteDb("HSqlCDT");
 	}
 
 }

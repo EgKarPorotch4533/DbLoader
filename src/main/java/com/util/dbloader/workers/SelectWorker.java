@@ -32,7 +32,9 @@ public class SelectWorker implements Runnable {
 			try {
 				ResultSet rs = connection.createStatement().executeQuery(
 						new SelectFromTable(tableName, schemaName).getQuery());
-				cacheQueue.put(new RecordCache(rs));
+				while (rs.next()) {
+					cacheQueue.put(new RecordCache(rs));
+				}
 			} catch (SQLException e1) {
 				System.err.printf("[%d] sql exception while reading of table (%s) of schema (%s)%n", Thread.currentThread().getId(), tableName, schemaName);
 			} catch (InterruptedException e) {

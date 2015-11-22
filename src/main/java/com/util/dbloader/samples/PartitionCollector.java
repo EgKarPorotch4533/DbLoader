@@ -25,11 +25,13 @@ public class PartitionCollector {
 	 */
 	public List<String> list(String tableName, String schemaName) throws SQLException, ClassNotFoundException {
 		Connection connection = descriptor.createConnection();
+		System.out.printf("[PartitionCollector] start grep partitions...%n");
 		ResultSet rs = connection.createStatement()
 				.executeQuery(new SelectPartitions(tableName, schemaName).getQuery());
 		List<String> lst = new ArrayList<String>();
 		while(rs.next()) {
 			lst.add(rs.getString(1));
+			System.out.printf("[PartitionCollector] partition_name: %s%n");
 		}
 		connection.close();
 		return lst;

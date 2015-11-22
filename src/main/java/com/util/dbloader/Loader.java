@@ -19,6 +19,7 @@ import com.util.dbloader.queries.SourceReader;
 import com.util.dbloader.samples.PartitionCollector;
 import com.util.dbloader.workers.BulkInsertWorker;
 import com.util.dbloader.workers.PartitionSelectWorker;
+import com.util.dbloader.workers.SelectWorker;
 
 public class Loader {
 	
@@ -119,8 +120,37 @@ public class Loader {
 		service.awaitTermination(10, TimeUnit.SECONDS);
 	}
 	
-	private void startOnEntire() {
+	private void startOnEntire() throws InterruptedException, ClassNotFoundException, SQLException {
 		LinkedBlockingQueue<RecordCache> cacheQueue = new LinkedBlockingQueue<RecordCache>();
+		Metadata md = new SourceReader(sourceDescriptor).fetchMetafata(sourceTable, sourceSchema);
+		ExecutorService service = Executors.newFixedThreadPool(NUM_OF_READERS + NUM_OF_WRITERS);
+		// create readers
+		for (int i = 0; i < 1; i++) {
+			service.execute(new SelectWorker(sourceDescriptor, sourceTable, sourceSchema, cacheQueue));
+		}
+		// wait for readers to collect initial data
+		while (cacheQueue.size() < MIN_INITIAL_ITEMS) {
+			Thread.sleep(2000);
+		}
+		// create writers
+		for (int k = 0; k < NUM_OF_WRITERS; k++) {
+			service.execute(new BulkInsertWorker(destDescriptor, md, destTable, destSchema, cacheQueue, BULK_INSERT_SIZE));
+		}
+		// wait for writers to start
+		Thread.sleep(3000);
+		
+		// main cycle
+		while (!cacheQueue.isEmpty()) {
+			System.out.printf("[main] source queue: %d, dest queue: %d%n", cacheQueue.size());
+			Thread.sleep(MONITOR_SLEEP_MS);
+		}
+
+		// wait for some time before shutdown
+		Thread.sleep(3000);
+		
+		service.shutdown();
+
+		service.awaitTermination(10, TimeUnit.SECONDS);
 	}
 	
 	private LinkedBlockingQueue<String> createPartitionQueue(List<String> partitions) throws SQLException {

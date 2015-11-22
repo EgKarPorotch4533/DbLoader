@@ -60,6 +60,7 @@ public class BulkInsertWorker implements Runnable {
 	private void pushSlice(Connection connection, List<RecordCache> cacheList) throws SQLException {
 		PreparedStatement ps = connection.prepareStatement(
 				new PreparedInsert(md, tableName, schemaName).getNamedInsert());
+		System.out.printf("[%d] inserting patch into table (%s) of schema (%s)%n", Thread.currentThread(), tableName, schemaName);
 		for (RecordCache record : cacheList) {
 			SqlMappingUtil.evaluateStatement(ps, md, record);
 			ps.addBatch();

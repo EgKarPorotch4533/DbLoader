@@ -19,7 +19,7 @@ public class SourceReader {
 		this.connection = null;
 	}
 	
-	public Metadata fetchMetafata(String tableName, String schemaName) throws SQLException {
+	public Metadata fetchMetafata(String tableName, String schemaName) throws SQLException, ClassNotFoundException {
 		try {
 			if (connection == null) {
 				connection = descriptor.createConnection();

@@ -21,8 +21,9 @@ public class PartitionCollector {
 	 * List all partitions for specified table
 	 * @return
 	 * @throws SQLException 
+	 * @throws ClassNotFoundException 
 	 */
-	public List<String> list(String tableName, String schemaName) throws SQLException {
+	public List<String> list(String tableName, String schemaName) throws SQLException, ClassNotFoundException {
 		Connection connection = descriptor.createConnection();
 		ResultSet rs = connection.createStatement()
 				.executeQuery(new SelectPartitions(tableName, schemaName).getQuery());

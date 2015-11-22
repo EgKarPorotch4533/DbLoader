@@ -32,8 +32,8 @@ public class Metadata implements ResultSetMetaData {
 	boolean[] definitlywritables;
 	String[] columnclassnames;
 	
-	public Metadata(ResultSetMetaData md) throws SQLException {
-		columnCount = md.getColumnCount();
+	public Metadata(ResultSetMetaData rsmd) throws SQLException {
+		columnCount = rsmd.getColumnCount();
 		autoincrements = new boolean[columnCount];
 		casesensitives = new boolean[columnCount];
 		searchables = new boolean[columnCount];
@@ -55,26 +55,26 @@ public class Metadata implements ResultSetMetaData {
 		columnclassnames = new String[columnCount];
 		for (int i = 0; i < columnCount; i++) {
 			int colNum = i + 1;
-			autoincrements[i] = md.isAutoIncrement(colNum);
-			casesensitives[i] = md.isCaseSensitive(colNum);
-			searchables[i] = md.isSearchable(colNum);
-			currencies[i] = md.isCurrency(colNum);
-			nullables[i] = md.isNullable(colNum);
-			signeditems[i] = md.isSigned(colNum);
-			displaysizes[i] = md.getColumnDisplaySize(colNum);
-			columnlables[i] = md.getColumnLabel(colNum);
-			columnnames[i] = md.getColumnName(colNum);
-			schemanames[i] = md.getSchemaName(colNum);
-			precisions[i] = md.getPrecision(colNum);
-			scales[i] = md.getScale(colNum);
-			tablenames[i] = md.getTableName(colNum);
-			catalognames[i] = md.getCatalogName(colNum);
-			columntypes[i] = md.getColumnType(colNum);
-			columntypenames[i] = md.getColumnTypeName(colNum);
-			readonlys[i] = md.isReadOnly(colNum);
-			writables[i] = md.isWritable(colNum);
-			definitlywritables[i] = md.isDefinitelyWritable(colNum);
-			columnclassnames[i] = md.getColumnClassName(colNum);
+			autoincrements[i] = rsmd.isAutoIncrement(colNum);
+			casesensitives[i] = rsmd.isCaseSensitive(colNum);
+			searchables[i] = rsmd.isSearchable(colNum);
+			currencies[i] = rsmd.isCurrency(colNum);
+			nullables[i] = rsmd.isNullable(colNum);
+			signeditems[i] = rsmd.isSigned(colNum);
+			displaysizes[i] = rsmd.getColumnDisplaySize(colNum);
+			columnlables[i] = rsmd.getColumnLabel(colNum);
+			columnnames[i] = rsmd.getColumnName(colNum);
+			schemanames[i] = rsmd.getSchemaName(colNum);
+			precisions[i] = rsmd.getPrecision(colNum);
+			scales[i] = rsmd.getScale(colNum);
+			tablenames[i] = rsmd.getTableName(colNum);
+			catalognames[i] = rsmd.getCatalogName(colNum);
+			columntypes[i] = rsmd.getColumnType(colNum);
+			columntypenames[i] = rsmd.getColumnTypeName(colNum);
+			readonlys[i] = rsmd.isReadOnly(colNum);
+			writables[i] = rsmd.isWritable(colNum);
+			definitlywritables[i] = rsmd.isDefinitelyWritable(colNum);
+			columnclassnames[i] = rsmd.getColumnClassName(colNum);
 		}
 	}
 

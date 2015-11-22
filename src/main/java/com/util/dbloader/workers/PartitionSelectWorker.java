@@ -45,7 +45,7 @@ public class PartitionSelectWorker implements Runnable {
 					e.printStackTrace();
 				}
 			}
-		} catch (SQLException e1) {
+		} catch (SQLException | ClassNotFoundException e1) {
 			System.err.println("failed to open connection to DB, worker exits");
 			e1.printStackTrace();
 			return;

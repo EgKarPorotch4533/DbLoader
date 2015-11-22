@@ -1,5 +1,7 @@
 package com.util.dbloader;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -7,7 +9,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import com.util.dbloader.configurations.Configurator;
+import com.util.dbloader.configurations.Mapping;
 import com.util.dbloader.connections.ConnectionDescriptor;
+import com.util.dbloader.connections.ConnectionFactory;
 import com.util.dbloader.model.Metadata;
 import com.util.dbloader.model.RecordCache;
 import com.util.dbloader.queries.SourceReader;
@@ -26,20 +31,48 @@ public class Loader {
 	
 	private final ConnectionDescriptor sourceDescriptor;
 	private final ConnectionDescriptor destDescriptor;
-	private final String tableName;
+	private final String sourceTable;
+	private final String destTable;
 	private final String sourceSchema;
 	private final String destSchema;
 	
+	public static void main(String ... args) throws SQLException, InterruptedException, Exception {
+		if (args.length != 1) {
+			System.err.println("path to yaml config file as first argument");
+			return;
+		}
+		try {
+			Configurator configurator = new Configurator(new File(args[0]));
+			for (Mapping mapping : configurator.getConfiguration().getMappings()) {
+				new Loader(mapping).start();
+			}
+		} catch (FileNotFoundException e) {
+			System.err.printf("file not found %s%n", new File(args[0]).getAbsolutePath());
+			return;
+		}
+	}
+	
+	public Loader(Mapping mapping) throws Exception {
+		this(
+				ConnectionFactory.getConnectionDescriptor(mapping.getSource().getConnection()), 
+				ConnectionFactory.getConnectionDescriptor(mapping.getDestination().getConnection()), 
+				mapping.getSource().getTableName(),
+				mapping.getDestination().getTableName(),
+				mapping.getSource().getSchemaName(), 
+				mapping.getDestination().getSchemaName());
+	}
+	
 	public Loader(ConnectionDescriptor sourceDescriptor, ConnectionDescriptor destDescriptor,
-			String tableName, String sourceSchema, String destSchema) {
+			String sourceTable, String destTable, String sourceSchema, String destSchema) {
 		this.sourceDescriptor = sourceDescriptor;
 		this.destDescriptor = destDescriptor;
-		this.tableName = tableName;
+		this.sourceTable = sourceTable;
+		this.destTable = destTable;
 		this.sourceSchema = sourceSchema;
 		this.destSchema = destSchema;
 	}
 	
-	public void start() throws SQLException, InterruptedException {
+	public void start() throws SQLException, InterruptedException, ClassNotFoundException {
 		List<String> partitions = getSourcePartitions();
 		if (partitions.size() > 0) {
 			startOnPartitions(partitions);
@@ -48,14 +81,14 @@ public class Loader {
 		}
 	}
 	
-	private void startOnPartitions(List<String> partitions) throws SQLException, InterruptedException {
+	private void startOnPartitions(List<String> partitions) throws SQLException, InterruptedException, ClassNotFoundException {
 		LinkedBlockingQueue<String> partitionQueue = createPartitionQueue(partitions);
 		LinkedBlockingQueue<RecordCache> cacheQueue = new LinkedBlockingQueue<RecordCache>();
-		Metadata md = new SourceReader(sourceDescriptor).fetchMetafata(tableName, sourceSchema);
+		Metadata md = new SourceReader(sourceDescriptor).fetchMetafata(sourceTable, sourceSchema);
 		ExecutorService service = Executors.newFixedThreadPool(NUM_OF_READERS + NUM_OF_WRITERS);
 		// create readers
 		for (int i = 0; i < NUM_OF_READERS; i++) {
-			service.execute(new PartitionSelectWorker(sourceDescriptor, tableName, sourceSchema, partitionQueue, cacheQueue));
+			service.execute(new PartitionSelectWorker(sourceDescriptor, sourceTable, sourceSchema, partitionQueue, cacheQueue));
 		}
 		// wait for readers to collect initial data
 		while (partitionQueue.size() > 0 && cacheQueue.size() < MIN_INITIAL_ITEMS) {
@@ -67,7 +100,7 @@ public class Loader {
 		}
 		// create writers
 		for (int k = 0; k < NUM_OF_WRITERS; k++) {
-			service.execute(new BulkInsertWorker(destDescriptor, md, destSchema, cacheQueue, BULK_INSERT_SIZE));
+			service.execute(new BulkInsertWorker(destDescriptor, md, destTable, destSchema, cacheQueue, BULK_INSERT_SIZE));
 		}
 		// wait for writers to start
 		Thread.sleep(3000);
@@ -98,9 +131,9 @@ public class Loader {
 		return queue;
 	}
 	
-	private List<String> getSourcePartitions() throws SQLException {
+	private List<String> getSourcePartitions() throws SQLException, ClassNotFoundException {
 		return new PartitionCollector(sourceDescriptor)
-			.list(tableName, sourceSchema);
+			.list(sourceTable, sourceSchema);
 	}
 	
 }

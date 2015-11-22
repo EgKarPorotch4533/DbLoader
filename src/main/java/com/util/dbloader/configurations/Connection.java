@@ -2,7 +2,7 @@ package com.util.dbloader.configurations;
 
 public class Connection {
 	
-	public enum Vendors { ORACLE, MYSQL, POSTGRESSQL }
+	public enum Vendors { ORACLE, MYSQL, POSTGRESQL, HSQL }
 
 	private String url;
 	private String user;

@@ -22,10 +22,10 @@ public class BulkInsertWorker implements Runnable {
 	private final int bulkSize;
 	private final Metadata md;
 	
-	public BulkInsertWorker(ConnectionDescriptor connectionDescriptor, Metadata md, String schemaName,
+	public BulkInsertWorker(ConnectionDescriptor connectionDescriptor, Metadata md, String tableName, String schemaName,
 			LinkedBlockingQueue<RecordCache> cacheQueue, int bulkSize) throws SQLException {
 		this.connectionDescriptor = connectionDescriptor;
-		this.tableName = md.getTableName(1);
+		this.tableName = tableName;
 		this.schemaName = schemaName;
 		this.cacheQueue = cacheQueue;
 		this.bulkSize = bulkSize;
@@ -50,7 +50,7 @@ public class BulkInsertWorker implements Runnable {
 					System.err.printf("sql exception while writing to table (%s) of schema (%s)%n", tableName, schemaName);
 				}
 			}
-		} catch (SQLException e) {
+		} catch (SQLException | ClassNotFoundException e) {
 			System.err.println("failed to open connection to DB, worker exits");
 			e.printStackTrace();
 			return;
@@ -58,7 +58,8 @@ public class BulkInsertWorker implements Runnable {
 	}
 	
 	private void pushSlice(Connection connection, List<RecordCache> cacheList) throws SQLException {
-		PreparedStatement ps = connection.prepareStatement(new PreparedInsert(null).getNamedInsert());
+		PreparedStatement ps = connection.prepareStatement(
+				new PreparedInsert(md, tableName, schemaName).getNamedInsert());
 		for (RecordCache record : cacheList) {
 			SqlMappingUtil.evaluateStatement(ps, md, record);
 			ps.addBatch();

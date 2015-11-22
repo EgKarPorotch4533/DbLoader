@@ -9,10 +9,12 @@ import java.sql.SQLException;
  * @author ekorotchenko
  *
  */
-public class ConnectionDescriptor {
+public abstract class ConnectionDescriptor {
 
 	static final String POSTGRES_DRIVER_CLASS_NAME = "org.postgresql.Driver";
 	static final String ORACLE_DRIVER_CLASS_NAME = "oracle.jdbc.driver.OracleDriver";
+	static final String MYSQL_DRIVER_CLASS_NAME = "com.mysql.jdbc.Driver";
+	static final String HSQL_DRIVER_CLASS_NAME = "org.hsqldb.jdbcDriver";
 
 	private final String url;
 	private final String user;
@@ -36,11 +38,10 @@ public class ConnectionDescriptor {
 		return pass;
 	}
 	
-	public String getDriverClassName() {
-		return null;
-	}
+	public abstract String getDriverClassName();
 	
-	public Connection createConnection() throws SQLException {
+	public Connection createConnection() throws SQLException, ClassNotFoundException {
+		Class.forName(getDriverClassName());
 		return DriverManager.getConnection(
 				url, user, pass);
 	}

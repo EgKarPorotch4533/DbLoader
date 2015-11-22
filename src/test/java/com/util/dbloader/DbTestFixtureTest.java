@@ -37,39 +37,40 @@ public class DbTestFixtureTest extends DbTestFixture {
 
 	@Test
 	public void testCreateDb_AndClose() throws ClassNotFoundException, SQLException {
-		Connection conn = super.createDb("testCreateDb");
+		Connection conn = super.createDb("testCreateDb1");
 		Assert.assertNotNull(conn);
 		conn.close();
-		Assert.assertFalse(new File(super.classResourcesDir, "testCreateDb.tmp").exists());
-		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb.script").exists());
-		Assert.assertFalse(new File(super.classResourcesDir, "testCreateDb.log").exists());
-		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb.properties").exists());
-		super.cleanupAndDeleteDb("testCreateDb");
+		Assert.assertFalse(new File(super.classResourcesDir, "testCreateDb1.tmp").exists());
+		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb1.script").exists());
+		Assert.assertFalse(new File(super.classResourcesDir, "testCreateDb1.log").exists());
+		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb1.properties").exists());
+		super.cleanupAndDeleteDb("testCreateDb1");
 	}
 
 	@Test
 	public void testCreateDb_Drop() throws ClassNotFoundException, SQLException {
-		Connection conn = super.createDb("testCreateDb");
+		Connection conn = super.createDb("testCreateDb2");
 		Assert.assertNotNull(conn);
-		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb.tmp").exists());
-		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb.script").exists());
-		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb.log").exists());
-		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb.properties").exists());
-		super.cleanupAndDeleteDb("testCreateDb");
-		Assert.assertFalse(new File(super.classResourcesDir, "testCreateDb.tmp").exists());
-		Assert.assertFalse(new File(super.classResourcesDir, "testCreateDb.script").exists());
-		Assert.assertFalse(new File(super.classResourcesDir, "testCreateDb.log").exists());
-		Assert.assertFalse(new File(super.classResourcesDir, "testCreateDb.properties").exists());
+		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb2.tmp").exists());
+		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb2.script").exists());
+		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb2.log").exists());
+		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb2.properties").exists());
+		conn.close();
+		super.cleanupAndDeleteDb("testCreateDb2");
+		Assert.assertFalse(new File(super.classResourcesDir, "testCreateDb2.tmp").exists());
+		Assert.assertFalse(new File(super.classResourcesDir, "testCreateDb2.script").exists());
+		Assert.assertFalse(new File(super.classResourcesDir, "testCreateDb2.log").exists());
+		Assert.assertFalse(new File(super.classResourcesDir, "testCreateDb2.properties").exists());
 	}
 
 	@Test
 	public void testCreateDb_CreateTable() throws ClassNotFoundException, SQLException {
-		Connection conn = super.createDb("testCreateDb");
+		Connection conn = super.createDb("testCreateDb3");
 		Assert.assertNotNull(conn);
-		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb.tmp").exists());
-		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb.script").exists());
-		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb.log").exists());
-		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb.properties").exists());
+		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb3.tmp").exists());
+		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb3.script").exists());
+		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb3.log").exists());
+		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb3.properties").exists());
 		Statement st = conn.createStatement();
 		st.executeUpdate("CREATE TABLE FOO (ID INTEGER, NAME VARCHAR(30))");
 		st.close();
@@ -88,17 +89,17 @@ public class DbTestFixtureTest extends DbTestFixture {
 		}
 		Assert.assertEquals(2, counter);
 		conn.close();
-		super.cleanupAndDeleteDb("testCreateDb");
+		super.cleanupAndDeleteDb("testCreateDb3");
 	}
 
 	@Test
 	public void testCreateDb_CreateTableWithSchema() throws ClassNotFoundException, SQLException {
-		Connection conn = super.createDb("testCreateDb1");
+		Connection conn = super.createDb("testCreateDb4");
 		Assert.assertNotNull(conn);
-		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb1.tmp").exists());
-		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb1.script").exists());
-		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb1.log").exists());
-		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb1.properties").exists());
+		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb4.tmp").exists());
+		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb4.script").exists());
+		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb4.log").exists());
+		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb4.properties").exists());
 		Statement st = conn.createStatement();
 		st.executeUpdate("CREATE SCHEMA SCH AUTHORIZATION DBA");
 		st.close();
@@ -120,7 +121,7 @@ public class DbTestFixtureTest extends DbTestFixture {
 		}
 		Assert.assertEquals(2, counter);
 		conn.close();
-		super.cleanupAndDeleteDb("testCreateDb1");
+		super.cleanupAndDeleteDb("testCreateDb4");
 	}
 
 }

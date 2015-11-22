@@ -40,6 +40,7 @@ public class Metadata implements ResultSetMetaData {
 		currencies = new boolean[columnCount];
 		nullables = new int[columnCount];
 		signeditems = new boolean[columnCount];
+		displaysizes = new int[columnCount];
 		columnlables = new String[columnCount];
 		columnnames = new String[columnCount];
 		schemanames = new String[columnCount];

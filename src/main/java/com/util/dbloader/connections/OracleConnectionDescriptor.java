@@ -2,8 +2,8 @@ package com.util.dbloader.connections;
 
 public class OracleConnectionDescriptor extends ConnectionDescriptor {
 
-	public OracleConnectionDescriptor(String tns, String user, String pass) {
-		super(String.format("jdbc:oracle:thin@%s", tns), user, pass);
+	public OracleConnectionDescriptor(String url, String user, String pass) {
+		super(url, user, pass);
 	}
 	
 	@Override

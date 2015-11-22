@@ -31,6 +31,8 @@ public class DbTestFixtureTest extends DbTestFixture {
 		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb.script").exists());
 		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb.log").exists());
 		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb.properties").exists());
+		conn.close();
+		super.cleanupAndDeleteDb("testCreateDb");
 	}
 
 	@Test
@@ -42,6 +44,7 @@ public class DbTestFixtureTest extends DbTestFixture {
 		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb.script").exists());
 		Assert.assertFalse(new File(super.classResourcesDir, "testCreateDb.log").exists());
 		Assert.assertTrue(new File(super.classResourcesDir, "testCreateDb.properties").exists());
+		super.cleanupAndDeleteDb("testCreateDb");
 	}
 
 	@Test
@@ -78,9 +81,14 @@ public class DbTestFixtureTest extends DbTestFixture {
 		st.close();
 		st = conn.createStatement();
 		ResultSet rs = st.executeQuery("SELECT * FROM FOO");
+		int counter = 0;
 		while (rs.next()) {
 			System.out.printf("%d %s%n", rs.getInt(1), rs.getString(2));
+			counter++;
 		}
+		Assert.assertEquals(2, counter);
+		conn.close();
+		super.cleanupAndDeleteDb("testCreateDb");
 	}
 
 }

@@ -100,9 +100,6 @@ public class SqlMappingUtil {
 			case java.sql.Types.REF:
 				st.setRef(column, r.getRef(column));
 				break;
-			case java.sql.Types.ROWID:
-				// not transferable, skip
-				break;
 			case java.sql.Types.SMALLINT:
 				st.setShort(column, r.getShort(column));
 				break;

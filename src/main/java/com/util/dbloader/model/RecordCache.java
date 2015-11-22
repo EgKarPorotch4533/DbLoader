@@ -72,29 +72,108 @@ public class RecordCache implements Cortege {
 		urls = new URL[cnt];
 		for (int i = 0; i < cnt; i++) {
 			int columnIndex = i + 1;
-			strings[i] = rs.getString(columnIndex);
-			booleans[i] = rs.getBoolean(columnIndex);
-			bytes[i] = rs.getByte(columnIndex);
-			shorts[i] = rs.getShort(columnIndex);
-			ints[i] = rs.getInt(columnIndex);
-			longs[i] = rs.getLong(columnIndex);
-			floats[i] = rs.getFloat(columnIndex);
-			doubles[i] = rs.getDouble(columnIndex);
-			bytess[i] = rs.getBytes(columnIndex);
-			dates[i] = rs.getDate(columnIndex);
-			times[i] = rs.getTime(columnIndex);
-			timestamps[i] = rs.getTimestamp(columnIndex);
-			objects[i] = rs.getObject(columnIndex);
-			arrays[i] = rs.getArray(columnIndex);
-			bigdecimals[i] = rs.getBigDecimal(columnIndex);
-			blobs[i] = rs.getBlob(columnIndex);
-			clobs[i] = rs.getClob(columnIndex);
-			asciistreams[i] = rs.getAsciiStream(columnIndex);
-			binarystreams[i] = rs.getBinaryStream(columnIndex);
-			nclobs[i] = rs.getNClob(columnIndex);
-			refs[i] = rs.getRef(columnIndex);
-			sqlxmls[i] = rs.getSQLXML(columnIndex);
-			urls[i] = rs.getURL(columnIndex);
+			switch (rs.getMetaData().getColumnType(columnIndex)) {
+			case java.sql.Types.ARRAY:
+				arrays[i] = rs.getArray(columnIndex);
+				break;
+			case java.sql.Types.BIGINT:
+				longs[i] = rs.getLong(columnIndex);
+				break;
+			case java.sql.Types.BINARY:
+				bytess[i] = rs.getBytes(columnIndex);
+				break;
+			case java.sql.Types.BIT:
+				booleans[i] = rs.getBoolean(columnIndex);
+				break;
+			case java.sql.Types.BLOB:
+				blobs[i] = rs.getBlob(columnIndex);
+				break;
+			case java.sql.Types.BOOLEAN:
+				booleans[i] = rs.getBoolean(columnIndex);
+				break;
+			case java.sql.Types.CHAR:
+				strings[i] = rs.getString(columnIndex);
+				break;
+			case java.sql.Types.CLOB:
+				clobs[i] = rs.getClob(columnIndex);
+				break;
+			case java.sql.Types.DATALINK:
+				urls[i] = rs.getURL(columnIndex);
+				break;
+			case java.sql.Types.DATE:
+				dates[i] = rs.getDate(columnIndex);
+				break;
+			case java.sql.Types.DECIMAL:
+				bigdecimals[i] = rs.getBigDecimal(columnIndex);
+				break;
+			case java.sql.Types.DISTINCT:
+				strings[i] = rs.getString(columnIndex);
+				break;
+			case java.sql.Types.DOUBLE:
+				doubles[i] = rs.getDouble(columnIndex);
+				break;
+			case java.sql.Types.FLOAT:
+				doubles[i] = rs.getDouble(columnIndex);
+				break;
+			case java.sql.Types.INTEGER:
+				ints[i] = rs.getInt(columnIndex);
+				break;
+			case java.sql.Types.JAVA_OBJECT:
+				objects[i] = rs.getObject(columnIndex);
+				break;
+			case java.sql.Types.LONGVARCHAR:
+			case java.sql.Types.LONGNVARCHAR:
+				asciistreams[i] = rs.getAsciiStream(columnIndex);
+				break;
+			case java.sql.Types.LONGVARBINARY:
+				binarystreams[i] = rs.getBinaryStream(columnIndex);
+				break;
+			case java.sql.Types.NCHAR:
+				strings[i] = rs.getString(columnIndex);
+				break;
+			case java.sql.Types.NCLOB:
+				nclobs[i] = rs.getNClob(columnIndex);
+				break;
+			case java.sql.Types.NUMERIC:
+				bigdecimals[i] = rs.getBigDecimal(columnIndex);
+				break;
+			case java.sql.Types.NVARCHAR:
+				strings[i] = rs.getString(columnIndex);
+				break;
+			case java.sql.Types.OTHER:
+				objects[i] = rs.getObject(columnIndex);
+				break;
+			case java.sql.Types.REAL:
+				floats[i] = rs.getFloat(columnIndex);
+				break;
+			case java.sql.Types.REF:
+				refs[i] = rs.getRef(columnIndex);
+				break;
+			case java.sql.Types.SMALLINT:
+				shorts[i] = rs.getShort(columnIndex);
+				break;
+			case java.sql.Types.SQLXML:
+				sqlxmls[i] = rs.getSQLXML(columnIndex);
+				break;
+			case java.sql.Types.STRUCT:
+				objects[i] = rs.getObject(columnIndex);
+				break;
+			case java.sql.Types.TIME:
+				times[i] = rs.getTime(columnIndex);
+				break;
+			case java.sql.Types.TIMESTAMP:
+				timestamps[i] = rs.getTimestamp(columnIndex);
+				break;
+			case java.sql.Types.TINYINT:
+				bytes[i] = rs.getByte(columnIndex);
+				break;
+			case java.sql.Types.VARBINARY:
+				bytess[i] = rs.getBytes(columnIndex);
+				break;
+			case java.sql.Types.VARCHAR:
+				strings[i] = rs.getString(columnIndex);
+				break;
+			}
 		}
 	}
 

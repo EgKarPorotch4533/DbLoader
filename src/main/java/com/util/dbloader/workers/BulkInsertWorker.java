@@ -37,6 +37,7 @@ public class BulkInsertWorker implements Runnable {
 		Connection connection = null;
 		try {
 			connection = connectionDescriptor.createConnection();
+			connection.setAutoCommit(false);
 			List<RecordCache> cacheList = new ArrayList<RecordCache>();
 			while (!cacheQueue.isEmpty()) {
 				int k = bulkSize;
@@ -67,6 +68,7 @@ public class BulkInsertWorker implements Runnable {
 			ps.addBatch();
 		}
 		ps.executeBatch();
+		connection.commit();
 	}
 
 }

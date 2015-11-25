@@ -27,6 +27,7 @@ public class Loader {
 	private static final int NUM_OF_WRITERS = 16;
 	private static final int MIN_INITIAL_ITEMS = 10;
 	private static final int BULK_INSERT_SIZE = 500;
+	private static final int MAX_QUEUE_SIZE = 130000;
 	
 	private static final long MONITOR_SLEEP_MS = 1000 * 10L;
 	
@@ -84,7 +85,7 @@ public class Loader {
 	
 	private void startOnPartitions(List<String> partitions) throws SQLException, InterruptedException, ClassNotFoundException {
 		LinkedBlockingQueue<String> partitionQueue = createPartitionQueue(partitions);
-		LinkedBlockingQueue<RecordCache> cacheQueue = new LinkedBlockingQueue<RecordCache>();
+		LinkedBlockingQueue<RecordCache> cacheQueue = new LinkedBlockingQueue<RecordCache>(MAX_QUEUE_SIZE);
 		Metadata md = new SourceReader(sourceDescriptor).fetchMetafata(sourceTable, sourceSchema);
 		ExecutorService service = Executors.newFixedThreadPool(NUM_OF_READERS + NUM_OF_WRITERS);
 		// create readers
@@ -108,7 +109,7 @@ public class Loader {
 		
 		// main cycle
 		while (!(partitionQueue.isEmpty() && cacheQueue.isEmpty())) {
-			System.out.printf("[main] source queue: %d, dest queue: %d%n", partitionQueue.size(), cacheQueue.size());
+			System.out.printf("[main] source queue: %d, dest queue: %d\n", partitionQueue.size(), cacheQueue.size());
 			Thread.sleep(MONITOR_SLEEP_MS);
 		}
 
@@ -121,7 +122,7 @@ public class Loader {
 	}
 	
 	private void startOnEntire() throws InterruptedException, ClassNotFoundException, SQLException {
-		LinkedBlockingQueue<RecordCache> cacheQueue = new LinkedBlockingQueue<RecordCache>();
+		LinkedBlockingQueue<RecordCache> cacheQueue = new LinkedBlockingQueue<RecordCache>(MAX_QUEUE_SIZE);
 		Metadata md = new SourceReader(sourceDescriptor).fetchMetafata(sourceTable, sourceSchema);
 		ExecutorService service = Executors.newFixedThreadPool(NUM_OF_READERS + NUM_OF_WRITERS);
 		// create readers
@@ -141,7 +142,7 @@ public class Loader {
 		
 		// main cycle
 		while (!cacheQueue.isEmpty()) {
-			System.out.printf("[main] source queue: %d, dest queue: %d%n", cacheQueue.size());
+			System.out.printf("[main] source queue: %d\n", cacheQueue.size());
 			Thread.sleep(MONITOR_SLEEP_MS);
 		}
 

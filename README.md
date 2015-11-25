@@ -54,3 +54,5 @@ mappings:
 ```
 The loader will queue all mappings serially but will try to parallelize each table loading as best as he can.
 
+Settings given for max case of simple 4core i5 16G, with ~(xmx=4096m perm=1024m) for java
+Blobs containing table is still loading slower, MAX_QUEUE_SIZE is for RAM limitations ~ for top loading of 16G desktop

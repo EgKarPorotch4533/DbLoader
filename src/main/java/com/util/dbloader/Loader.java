@@ -23,10 +23,10 @@ import com.util.dbloader.workers.SelectWorker;
 
 public class Loader {
 	
-	private static final int NUM_OF_READERS = 4;
-	private static final int NUM_OF_WRITERS = 4;
+	private static final int NUM_OF_READERS = 16;
+	private static final int NUM_OF_WRITERS = 16;
 	private static final int MIN_INITIAL_ITEMS = 10;
-	private static final int BULK_INSERT_SIZE = 50;
+	private static final int BULK_INSERT_SIZE = 500;
 	
 	private static final long MONITOR_SLEEP_MS = 1000 * 10L;
 	

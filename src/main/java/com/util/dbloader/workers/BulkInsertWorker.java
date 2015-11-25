@@ -40,16 +40,19 @@ public class BulkInsertWorker implements Runnable {
 			connection.setAutoCommit(false);
 			List<RecordCache> cacheList = new ArrayList<RecordCache>();
 			while (!cacheQueue.isEmpty()) {
-				int k = bulkSize;
 				cacheList.clear();
-				while(k-- > 0 && !cacheQueue.isEmpty()) {
-					cacheList.add(cacheQueue.poll());
-				}
+				cacheQueue.drainTo(cacheList, bulkSize);
 				try {
 					pushSlice(connection, cacheList);
 				} catch (SQLException e1) {
-					System.err.printf("sql exception while writing to table (%s) of schema (%s)%n", tableName, schemaName);
+					System.err.printf("sql exception while writing to table (%s) of schema (%s)\n", tableName, schemaName);
 					e1.printStackTrace();
+				}
+				try {
+					// wait for others..
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					System.err.printf("[%d] me was interrupted...\n", Thread.currentThread().getId());
 				}
 			}
 		} catch (SQLException | ClassNotFoundException e) {
@@ -62,9 +65,10 @@ public class BulkInsertWorker implements Runnable {
 	private void pushSlice(Connection connection, List<RecordCache> cacheList) throws SQLException {
 		PreparedStatement ps = connection.prepareStatement(
 				new PreparedInsert(md, tableName, schemaName).getNamedInsert());
-		System.out.printf("[%d] inserting patch into table (%s) of schema (%s)%n", Thread.currentThread().getId(), tableName, schemaName);
+		System.out.printf("[%d] inserting patch...\n", Thread.currentThread().getId());
 		for (RecordCache record : cacheList) {
-			SqlMappingUtil.evaluateStatement(ps, md, record);
+			SqlMappingUtil.evaluateStatement(ps, md, record, connectionDescriptor
+					.getDriverClassName().toLowerCase().contains("oracle"));
 			ps.addBatch();
 		}
 		ps.executeBatch();

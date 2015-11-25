@@ -135,7 +135,12 @@ public class RecordCache implements Cortege {
 				nclobs[i] = rs.getNClob(columnIndex);
 				break;
 			case java.sql.Types.NUMERIC:
-				bigdecimals[i] = rs.getBigDecimal(columnIndex);
+				try {
+					bigdecimals[i] = rs.getBigDecimal(columnIndex);
+				} catch (NullPointerException npe) {
+					// it's not so clear there this exception comes from in internals of Oracle's driver
+					bigdecimals[i] = null;
+				}
 				break;
 			case java.sql.Types.NVARCHAR:
 				strings[i] = rs.getString(columnIndex);

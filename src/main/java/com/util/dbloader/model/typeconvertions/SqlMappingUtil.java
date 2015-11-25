@@ -16,7 +16,7 @@ public class SqlMappingUtil {
 	 * @param r
 	 * @throws SQLException
 	 */
-	public static void evaluateStatement(PreparedStatement st, Metadata md, RecordCache r) throws SQLException {
+	public static void evaluateStatement(PreparedStatement st, Metadata md, RecordCache r, boolean caseOfOracle) throws SQLException {
 		for (int i = 0; i < md.getColumnCount(); i++) {
 			int column = i + 1;
 			int sqlType = md.getColumnType(column);
@@ -34,7 +34,15 @@ public class SqlMappingUtil {
 				st.setBoolean(column, r.getBoolean(column));
 				break;
 			case java.sql.Types.BLOB:
-				st.setBlob(column, r.getBlob(column));
+				if (caseOfOracle) {
+					if (r.getBlob(column) == null) {
+						st.setBytes(column, null);
+					} else {
+						st.setBytes(column, r.getBlob(column).getBytes(1, (int) r.getBlob(column).length()));
+					}
+				} else {
+					st.setBlob(column, r.getBlob(column));
+				}
 				break;
 			case java.sql.Types.BOOLEAN:
 				st.setBoolean(column, r.getBoolean(column));

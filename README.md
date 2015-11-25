@@ -15,7 +15,7 @@ in the same order to the dest table (to be refactored)
 Usage:
 
 Just pass yaml configuration file path as first argument of Loader main's class with content like follows:
-
+<code>
 mappings:
     -
         source:
@@ -51,6 +51,6 @@ mappings:
                 user: me
                 pass: secret
                 vendor: ORACLE
-
+</code>
 The loader will queue all mappings serially but will try to parallelize each table loading as best as he can.
 
